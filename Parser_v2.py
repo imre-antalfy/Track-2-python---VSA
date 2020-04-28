@@ -49,105 +49,108 @@ gas_analysis = gas_analysis.resample('D').ffill()
 #%% new dataframe - input data
 
 p = ()
-df = pd.DataFrame(p)
+df_input = pd.DataFrame(p)
 
 # Fresh sludge concentrations
-df['FS TS-Konz [kg/m3]'] = input_data['Frischschlamm Trockenrückstand'] * 10
-df['FS GR-Konz [kg/m3]'] = df['FS TS-Konz [kg/m3]'] * input_data['Frischschlamm Glührückstand'] / 100
-df['FS oTS-Konz [kg/m3]'] = df['FS TS-Konz [kg/m3]'] - df['FS GR-Konz [kg/m3]']
+df_input['FS TS-Konz [kg/m3]'] = input_data['Frischschlamm Trockenrückstand'] * 10
+df_input['FS GR-Konz [kg/m3]'] = df_input['FS TS-Konz [kg/m3]'] * input_data['Frischschlamm Glührückstand'] / 100
+df_input['FS oTS-Konz [kg/m3]'] = df_input['FS TS-Konz [kg/m3]'] - df_input['FS GR-Konz [kg/m3]']
 
 # fresh sludge loads
-df['FS oTS-Fracht [kg/d]'] = (input_data['Frischschlamm Durchsatz Schlammaufwärmung'] * 
-                              df['FS oTS-Konz [kg/m3]'])
-df['FS CSB-Fracht [kg/d]'] = (input_data['Frischschlamm Durchsatz Schlammaufwärmung'] *
+df_input['FS oTS-Fracht [kg/d]'] = (input_data['Frischschlamm Durchsatz Schlammaufwärmung'] * 
+                              df_input['FS oTS-Konz [kg/m3]'])
+df_input['FS CSB-Fracht [kg/d]'] = (input_data['Frischschlamm Durchsatz Schlammaufwärmung'] *
                               input_data['Frischschlamm Konz CSB'])
-df['FS N-Fracht [kg/d]'] = (input_data['Frischschlamm Durchsatz Schlammaufwärmung'] *
+df_input['FS N-Fracht [kg/d]'] = (input_data['Frischschlamm Durchsatz Schlammaufwärmung'] *
                             input_data['Frischschlamm Konz N gesamt'])
-df['FS P-Fracht [kg/d]'] = (input_data['Frischschlamm Durchsatz Schlammaufwärmung'] *
+df_input['FS P-Fracht [kg/d]'] = (input_data['Frischschlamm Durchsatz Schlammaufwärmung'] *
                             input_data['Frischschlamm Konz P gesamt'])
 
 # external sludge concentrations
-df['AFS TS-Konz [kg/m3]'] = input_data['Annahme Frischschlamm Trockenrückstand'] * 10
-df['AFS GR-Konz [kg/m3]'] = (df['AFS TS-Konz [kg/m3]'] * 
+df_input['AFS TS-Konz [kg/m3]'] = input_data['Annahme Frischschlamm Trockenrückstand'] * 10
+df_input['AFS GR-Konz [kg/m3]'] = (df_input['AFS TS-Konz [kg/m3]'] * 
                              input_data['Annahme Frischschlamm Glührückstand'] / 100)
-df['AFS oTS-Konz [kg/m3]'] = df['AFS TS-Konz [kg/m3]'] - df['AFS GR-Konz [kg/m3]']
+df_input['AFS oTS-Konz [kg/m3]'] = df_input['AFS TS-Konz [kg/m3]'] - df_input['AFS GR-Konz [kg/m3]']
 
 # external sludge loads
-df['AFS oTS-Fracht [kg/d]'] = (input_data['Annahme Frischschlamm Menge'] * 
-                               df['AFS oTS-Konz [kg/m3]'])
-df['AFS CSB-Fracht [kg/d]'] = (input_data['Annahme Frischschlamm Menge'] *
+df_input['AFS oTS-Fracht [kg/d]'] = (input_data['Annahme Frischschlamm Menge'] * 
+                               df_input['AFS oTS-Konz [kg/m3]'])
+df_input['AFS CSB-Fracht [kg/d]'] = (input_data['Annahme Frischschlamm Menge'] *
                               input_data['Annahme Frischschlamm Konz CSB'])
-df['AFS N-Fracht [kg/d]'] = (input_data['Annahme Frischschlamm Menge'] *
+df_input['AFS N-Fracht [kg/d]'] = (input_data['Annahme Frischschlamm Menge'] *
                             input_data['Annahme Frischschlamm Konz N gesamt'])
-df['AFS P-Fracht [kg/d]'] = (input_data['Annahme Frischschlamm Menge'] *
+df_input['AFS P-Fracht [kg/d]'] = (input_data['Annahme Frischschlamm Menge'] *
                             input_data['Annahme Frischschlamm Konz P gesamt'])
 
 # CoSub loads
-df['CoSub CSB-Fracht [kg/month]'] = cosub['CoSub CSB-Fracht [t/m]'] * 1000
-df['CoSub N-Fracht [kg/month]'] = cosub['CoSub N-Fracht [t/m]'] * 1000
-df['CoSub P-Fracht [kg/month]'] = cosub['CoSub P-Fracht [t/m]'] * 1000
+df_input['CoSub CSB-Fracht [kg/month]'] = cosub['CoSub CSB-Fracht [t/m]'] * 1000
+df_input['CoSub N-Fracht [kg/month]'] = cosub['CoSub N-Fracht [t/m]'] * 1000
+df_input['CoSub P-Fracht [kg/month]'] = cosub['CoSub P-Fracht [t/m]'] * 1000
 
 #%% parameter data
 
-df['FR3 Temp mittel [°C]'] = ( (input_data['FR3 Temperatur oben'] +
+df_input['FR3 Temp mittel [°C]'] = ( (input_data['FR3 Temperatur oben'] +
                           input_data['FR3 Temperatur unten'] / 2))
 
 #%% output data
 
-# digested sludge concentrations
-df['FR3 TS-Konz [kg/m3]'] = input_data['FR3 Faulschlamm Trockenrückstand'] * 10
-df['FR3 GR-Konz [kg/m3]'] = (df['FR3 TS-Konz [kg/m3]'] * 
-                             input_data['FR3 Faulschlamm Glührückstand'] / 100)
-df['FR3 oTS-Konz [kg/m3]'] = (df['FR3 TS-Konz [kg/m3]'] - 
-                              df['FR3 GR-Konz [kg/m3]'])
+df_output = pd.DataFrame(p)
 
 # digested sludge concentrations
-df['FR3 Durchsatz [m3/d]'] = (input_data['Frischschlamm Durchsatz Schlammaufwärmung'] +
+df_output['FR3 TS-Konz [kg/m3]'] = input_data['FR3 Faulschlamm Trockenrückstand'] * 10
+df_output['FR3 GR-Konz [kg/m3]'] = (df_output['FR3 TS-Konz [kg/m3]'] * 
+                             input_data['FR3 Faulschlamm Glührückstand'] / 100)
+df_output['FR3 oTS-Konz [kg/m3]'] = (df_output['FR3 TS-Konz [kg/m3]'] - 
+                              df_output['FR3 GR-Konz [kg/m3]'])
+
+# digested sludge concentrations
+df_output['FR3 Durchsatz [m3/d]'] = (input_data['Frischschlamm Durchsatz Schlammaufwärmung'] +
                        input_data['Annahme Frischschlamm Menge'] +
                        cosub_day)
 
 # fresh sludge loads
-df['FR3 oTS-Fracht [kg/d]'] = (df['FR3 Durchsatz [m3/d]'] * 
-                               df['FR3 oTS-Konz [kg/m3]']) 
-df['FR3 CSB-Fracht [kg/d]'] = (df['FR3 Durchsatz [m3/d]'] *
+df_output['FR3 oTS-Fracht [kg/d]'] = (df_output['FR3 Durchsatz [m3/d]'] * 
+                               df_output['FR3 oTS-Konz [kg/m3]']) 
+df_output['FR3 CSB-Fracht [kg/d]'] = (df_output['FR3 Durchsatz [m3/d]'] *
                                input_data['FR3 Faulschlamm Konz CSB']
                                * 1000)
-df['FR3 N-Fracht [kg/d]'] = (df['FR3 Durchsatz [m3/d]'] *
+df_output['FR3 N-Fracht [kg/d]'] = (df_output['FR3 Durchsatz [m3/d]'] *
                              input_data['FR3 Faulschlamm Konz N gesamt']
                              * 1000)
-df['FR3 P-Fracht [kg/d]'] = (df['FR3 Durchsatz [m3/d]'] *
+df_output['FR3 P-Fracht [kg/d]'] = (df_output['FR3 Durchsatz [m3/d]'] *
                              input_data['FR3 Faulschlamm Konz P gesamt']
                              * 1000)
-df['FR3 NH4-N-Fracht [kg/d]'] = (df['FR3 Durchsatz [m3/d]'] *
+df_output['FR3 NH4-N-Fracht [kg/d]'] = (df_output['FR3 Durchsatz [m3/d]'] *
                                  input_data['FR3 Faulschlamm Konz NH4-N']
                                  * 1000)
 
 # Gas analysis data
-df['Prod. Gas, trocken [Nm3/d]'] = input_data['Gasmenge, trocken']
-df = pd.concat([df,gas_analysis], 
+df_output['Prod. Gas, trocken [Nm3/d]'] = input_data['Gasmenge, trocken']
+df_output = pd.concat([df_output,gas_analysis], 
                axis=1, 
                sort=False)
 
-df['Prod. CH4, trocken [Nm3/d]'] = (df['Prod. Gas, trocken [Nm3/d]'] *
-                                    df['Methan CH4  [Vol. %]'] /
+df_output['Prod. CH4, trocken [Nm3/d]'] = (df_output['Prod. Gas, trocken [Nm3/d]'] *
+                                    df_output['Methan CH4  [Vol. %]'] /
                                     100)
                                     
 #%% plotting dataframe
 # immediate calculations are not needed to plot
 # => see datalist for explanation
 
-df_plot = df.copy() # shallow copy!!!
+df_in_plt = df_input.copy() # shallow copy!!!
+df_out_plt = df_output.copy()
 # drop FS concentrations
-df_plot.drop(['FS TS-Konz [kg/m3]','FS GR-Konz [kg/m3]','FS oTS-Konz [kg/m3]'], 
+df_in_plt.drop(['FS TS-Konz [kg/m3]','FS GR-Konz [kg/m3]','FS oTS-Konz [kg/m3]'], 
              axis=1, inplace=True)
 # drop AFS concentrations
-df_plot.drop(['AFS TS-Konz [kg/m3]','AFS GR-Konz [kg/m3]','AFS oTS-Konz [kg/m3]'], 
+df_in_plt.drop(['AFS TS-Konz [kg/m3]','AFS GR-Konz [kg/m3]','AFS oTS-Konz [kg/m3]'], 
              axis=1, inplace=True)
 # drop digested sludge conentrations
-df_plot.drop(['FR3 Durchsatz [m3/d]','FR3 TS-Konz [kg/m3]','FR3 GR-Konz [kg/m3]','FR3 oTS-Konz [kg/m3]',], 
+df_out_plt.drop(['FR3 Durchsatz [m3/d]','FR3 TS-Konz [kg/m3]','FR3 GR-Konz [kg/m3]','FR3 oTS-Konz [kg/m3]',], 
              axis=1, inplace=True)
 # drop gas data
-df_plot.drop(['Prod. Gas, trocken [Nm3/d]'], 
+df_out_plt.drop(['Prod. Gas, trocken [Nm3/d]'], 
              axis=1, inplace=True)
 
 
